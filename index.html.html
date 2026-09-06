@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Mission : Commerce Connect</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Segoe UI",sans-serif;background-color:#1a1a2a;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:32px 32px;min-height:100vh;color:#fff;}
+.screen{display:none;min-height:100vh;padding:24px 16px;flex-direction:column;align-items:center;}
+.screen.active{display:flex;}
+#s-home{justify-content:center;}
+.wrap{width:100%;max-width:600px;}
+.card{background:rgba(255,255,255,.06);border:0.5px solid rgba(255,255,255,.12);border-radius:14px;padding:1.5rem;margin-bottom:14px;}
+.card-inner{background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.08);border-radius:10px;padding:1rem 1.25rem;margin-bottom:10px;}
+h1{font-size:20px;font-weight:500;color:#fff;margin-bottom:8px;}
+h2{font-size:16px;font-weight:500;color:#fff;margin-bottom:10px;}
+h3{font-size:14px;font-weight:500;color:#fff;margin:14px 0 6px;}
+p{font-size:13px;color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:8px;}
+.scenario{background:rgba(255,255,255,.04);border-left:3px solid #4ECDC4;padding:12px 16px;border-radius:0 8px 8px 0;font-style:italic;font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;margin:12px 0;}
+.warning{background:rgba(255,209,102,.08);border:0.5px solid rgba(255,209,102,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:#FFD166;margin:10px 0;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 22px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:500;transition:.15s;}
+.btn:active{transform:scale(.98);}
+.btn-teal{background:#4ECDC4;color:#1a1a2a;}
+.btn-red{background:#FF6B6B;color:#fff;}
+.btn-gold{background:#FFD166;color:#1a1a2a;}
+.btn-ghost{background:transparent;border:0.5px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);}
+.btn-purple{background:#A082FF;color:#fff;}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+.topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:12px;width:100%;max-width:600px;}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500;}
+.chip-red{background:rgba(255,107,107,.15);color:#FF6B6B;border:0.5px solid rgba(255,107,107,.3);}
+.chip-teal{background:rgba(78,205,196,.15);color:#4ECDC4;border:0.5px solid rgba(78,205,196,.3);}
+.chip-gold{background:rgba(255,209,102,.15);color:#FFD166;border:0.5px solid rgba(255,209,102,.3);}
+input[type=text],input[type=password],input[type=number]{width:100%;padding:9px 13px;background:rgba(255,255,255,.06);border:0.5px solid rgba(255,255,255,.2);border-radius:8px;font-size:13px;color:#fff;outline:none;transition:.2s;margin:5px 0 10px;}
+input:focus{border-color:#4ECDC4;}
+input::placeholder{color:rgba(255,255,255,.3);}
+.qcm-opt{display:block;padding:10px 14px;margin:6px 0;border-radius:8px;border:0.5px solid rgba(255,255,255,.1);cursor:pointer;font-size:13px;color:rgba(255,255,255,.7);background:rgba(255,255,255,.04);transition:.15s;}
+.qcm-opt:hover{border-color:rgba(78,205,196,.4);background:rgba(78,205,196,.06);color:#fff;}
+.qcm-opt.selected{border-color:rgba(78,205,196,.5);background:rgba(78,205,196,.1);color:#4ECDC4;}
+.qcm-opt.correct{border-color:rgba(78,205,196,.6);background:rgba(78,205,196,.15);color:#4ECDC4;}
+.qcm-opt.wrong{border-color:rgba(255,107,107,.5);background:rgba(255,107,107,.1);color:#FF6B6B;}
+.tf-btn{padding:8px 20px;border-radius:8px;border:0.5px solid rgba(255,255,255,.15);cursor:pointer;font-weight:500;font-size:13px;margin:3px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.7);transition:.15s;}
+.tf-btn:hover{background:rgba(255,255,255,.08);}
+.tf-sel-t{background:rgba(78,205,196,.15);border-color:rgba(78,205,196,.4);color:#4ECDC4;}
+.tf-sel-f{background:rgba(255,107,107,.12);border-color:rgba(255,107,107,.3);color:#FF6B6B;}
+.match-def-item{background:rgba(255,255,255,.05);border:0.5px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;font-size:12px;color:rgba(255,255,255,.7);line-height:1.5;cursor:pointer;transition:.15s;margin-bottom:6px;position:relative;}
+.match-def-item:hover{border-color:rgba(78,205,196,.3);}
+.match-def-item.selected{border-color:#4ECDC4;background:rgba(78,205,196,.1);color:#fff;}
+.match-def-item.matched{border-color:rgba(78,205,196,.5);background:rgba(78,205,196,.08);cursor:default;}
+.match-def-item.wrong-match{border-color:rgba(255,107,107,.5);background:rgba(255,107,107,.08);animation:shake .3s;}
+.match-word-item{display:inline-block;background:rgba(255,209,102,.08);border:0.5px solid rgba(255,209,102,.25);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;color:#FFD166;cursor:pointer;transition:.15s;margin:3px;}
+.match-word-item:hover{background:rgba(255,209,102,.14);}
+.match-word-item.selected{background:rgba(255,209,102,.2);border-color:#FFD166;color:#fff;}
+.match-word-item.used{opacity:.3;cursor:default;pointer-events:none;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+.timer-box{background:rgba(255,255,255,.08);border:0.5px solid rgba(255,255,255,.15);border-radius:10px;padding:8px 20px;font-size:1.2rem;font-weight:500;text-align:center;margin:10px 0;letter-spacing:3px;color:#fff;}
+.timer-box.urgent{background:rgba(255,107,107,.15);border-color:rgba(255,107,107,.4);color:#FF6B6B;animation:pulse .6s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+.result-ok{background:rgba(78,205,196,.1);border:0.5px solid rgba(78,205,196,.3);border-radius:8px;padding:12px 16px;color:#4ECDC4;font-size:13px;font-weight:500;margin:10px 0;}
+.result-fail{background:rgba(255,107,107,.1);border:0.5px solid rgba(255,107,107,.3);border-radius:8px;padding:12px 16px;color:#FF6B6B;font-size:13px;font-weight:500;margin:10px 0;}
+.fragment-box{background:rgba(255,209,102,.08);border:0.5px solid rgba(255,209,102,.3);border-radius:10px;padding:14px 24px;display:inline-block;margin:6px;}
+.fragment-word{font-size:20px;font-weight:500;letter-spacing:4px;color:#FFD166;}
+.situation-card{background:rgba(0,0,0,.25);border:0.5px solid rgba(255,255,255,.1);border-radius:10px;padding:1.25rem;margin:12px 0;font-size:13px;color:rgba(255,255,255,.75);line-height:1.8;}
+.situation-card strong{color:#fff;}
+.assess-list{list-style:none;padding:0;margin:8px 0;}
+.assess-list li{padding:3px 0;font-size:12px;color:rgba(255,255,255,.6);}
+.assess-list li::before{content:"✔ ";color:#4ECDC4;}
+.code-row{display:flex;gap:10px;align-items:center;margin-top:12px;}
+.code-row input{width:100px;text-align:center;font-size:1.3rem;font-weight:500;}
+.final-input{width:100%;padding:14px;font-size:1rem;text-align:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,209,102,.4);border-radius:10px;font-weight:500;letter-spacing:2px;color:#FFD166;}
+.final-input::placeholder{color:rgba(255,255,255,.2);letter-spacing:1px;}
+.member-row{display:flex;gap:8px;align-items:center;margin:4px 0;}
+.member-row input{flex:1;margin:0;}
+.rm-btn{background:rgba(255,107,107,.15);border:0.5px solid rgba(255,107,107,.3);color:#FF6B6B;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px;}
+.level-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;}
+footer{padding:20px 0 8px;font-size:11px;color:rgba(255,255,255,.2);text-align:center;width:100%;}
+.back{font-size:12px;color:rgba(255,255,255,.4);cursor:pointer;margin-bottom:12px;display:inline-block;}
+.back:hover{color:#4ECDC4;}
+.wordbank{background:rgba(255,209,102,.06);border:0.5px solid rgba(255,209,102,.2);border-radius:8px;padding:10px 14px;margin-bottom:12px;line-height:2;}
+.oral-scene-card{background:rgba(160,130,255,.06);border:0.5px solid rgba(160,130,255,.25);border-radius:10px;padding:1rem 1.25rem;margin-bottom:12px;}
+.oral-scene-card h4{color:#A082FF;font-size:13px;margin-bottom:8px;}
+.frag-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:16px 0;}
+.pdf-btn-fixed{position:fixed;bottom:20px;right:20px;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen active" id="s-home">
+<div style="width:100%;max-width:560px;padding:0 16px;">
+  <div style="text-align:center;margin-bottom:40px;">
+    <div style="font-size:28px;font-weight:500;color:#fff;margin-bottom:8px;">Mission : Commerce Connect</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.4);letter-spacing:.04em;">BTS MCO — Escape Game</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;padding:2.5rem 1.5rem;text-align:center;gap:20px;">
+      <div style="font-size:48px;line-height:1;">🎓</div>
+      <div>
+        <p style="color:#fff;font-size:15px;font-weight:500;margin-bottom:6px;">Espace Professeur</p>
+        <p style="font-size:12px;color:rgba(255,255,255,.35);margin:0;line-height:1.5;">Tableau de bord<br/>et scenarios</p>
+      </div>
+      <button class="btn btn-red" style="width:100%;justify-content:center;padding:12px;" id="btn-go-teacher">Acceder</button>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;padding:2.5rem 1.5rem;text-align:center;gap:20px;">
+      <div style="font-size:48px;line-height:1;">🚀</div>
+      <div>
+        <p style="color:#fff;font-size:15px;font-weight:500;margin-bottom:6px;">Espace Eleve</p>
+        <p style="font-size:12px;color:rgba(255,255,255,.35);margin:0;line-height:1.5;">Rejoindre<br/>la mission</p>
+      </div>
+      <button class="btn btn-teal" style="width:100%;justify-content:center;padding:12px;" id="btn-go-student">Demarrer</button>
+    </div>
+  </div>
+  <div style="text-align:center;margin-bottom:32px;">
+    <button class="btn btn-ghost" style="font-size:12px;padding:7px 20px;" id="btn-go-rgpd">Protection des donnees</button>
+  </div>
+  <div style="text-align:center;font-size:11px;color:rgba(255,255,255,.2);">Cree par C. Iemfre</div>
+</div>
+</div>
+
+<!-- RGPD -->
+<div class="screen" id="s-rgpd">
+<div class="wrap">
+  <span class="back" id="back-rgpd">← Retour</span>
+  <div class="card">
+    <h2>Protection des donnees personnelles</h2>
+    <p style="margin-bottom:16px;">Cette application est un outil pedagogique developpe pour un usage en classe.</p>
+    <div class="card-inner"><p>Aucune donnee n'est transmise a un serveur externe : toutes les informations (identifiant, reponses, score) restent uniquement dans la memoire de votre navigateur, le temps de la partie en cours.</p></div>
+    <div class="card-inner"><p>Aucun cookie tiers, aucun traceur publicitaire, aucun appel a une API externe n'est utilise.</p></div>
+    <div class="card-inner"><p>Les seules donnees saisies sont : les deux premieres lettres de votre prenom et de votre nom (utilisees uniquement pour generer un identifiant au format XX-YY, sans jamais collecter votre identite complete), ainsi que vos reponses aux exercices.</p></div>
+    <div class="card-inner"><p>Ces donnees ne sont jamais sauvegardees de facon permanente : elles disparaissent automatiquement si vous videz les donnees de navigation. La progression en cours de session est sauvegardee localement pour permettre la reprise.</p></div>
+    <div class="card-inner"><p>Le PDF genere est cree localement dans votre navigateur ; il n'est envoye a personne automatiquement. C'est a vous de le transmettre a votre professeur.</p></div>
+  </div>
+  <footer>Cree par C. Iemfre</footer>
+</div>
+</div>
+
+<!-- TEACHER LOGIN -->
+<div class="screen" id="s-teacher-login">
+<div class="wrap">
+  <span class="back" id="back-tlogin">← Retour</span>
+  <div class="card" style="max-width:380px;margin:0 auto;">
+    <h2>Espace Professeur</h2>
+    <p>Code d'acces :</p>
+    <input type="password" id="t-pwd" placeholder="Code professeur"/>
+    <div id="t-err" style="color:#FF6B6B;font-size:12px;display:none;margin-bottom:8px;">Code incorrect.</div>
+    <button class="btn btn-red" id="btn-teacher-login">Acceder</button>
+  </div>
+  <footer>Cree par C. Iemfre</footer>
+</div>
+</div>
+
+<!-- TEACHER PANEL -->
+<div class="screen" id="s-teacher">
+<div class="wrap">
+  <span class="back" id="back-teacher">← Retour</span>
+  <div class="card">
+    <h2>Tableau de bord Professeur</h2>
+    <div class="warning" style="margin-bottom:16px;">Code d'acces eleve : <strong style="color:#fff;letter-spacing:3px;">EXPERTSWANTED26</strong></div>
+    <div class="card-inner" style="margin-bottom:6px;background:rgba(255,107,107,.06);border-color:rgba(255,107,107,.2);">
+      <p style="color:#FF6B6B;font-size:12px;font-weight:500;margin-bottom:2px;">Code final a reconstituer par les eleves :</p>
+      <p style="color:#fff;font-size:13px;font-weight:500;">YOU ARE THE BEST TEAM</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="color:#A082FF;margin-bottom:12px;">🎤 Scenarios oraux — Niveau 3</h3>
+    <div class="oral-scene-card">
+      <h4>Situation 1 — click &amp; collect / cadeau urgent</h4>
+      <p>Un client vient recuperer une commande passee en ligne avec retrait en magasin. L'article est en rupture de stock non signalee. Le client est frustre : il a besoin du produit en urgence pour un cadeau. L'agent s'excuse, explique l'erreur de synchronisation et propose : livraison a domicile sous 24h offerte, ou bon de reduction 10% si attente 2 jours. Le client choisit la livraison.<br/><strong>Tache :</strong> Rendre compte de la situation et de la solution apportee a son manager.</p>
+    </div>
+    <div class="oral-scene-card">
+      <h4>Situation 2 — machine a cafe / evenement familial</h4>
+      <p>Une cliente vient recuperer une machine a cafe en click &amp; collect. L'article a ete vendu en magasin par erreur, stock non mis a jour. La cliente a pose une demi-journee. L'agent s'excuse, explique l'erreur de synchro, propose : livraison express garantie avant samedi matin offerte, ou remboursement + bon 15%. La cliente choisit la livraison express.<br/><strong>Tache :</strong> Rendre compte de la situation et de la solution apportee a son manager.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="color:#A082FF;margin-bottom:12px;">🎤 Scenarios oraux — Niveau 5</h3>
+    <div class="oral-scene-card">
+      <h4>Rapport #1 — TechZone Bordeaux</h4>
+      <p>Le display ShopConnect a ete demonte et remplace par celui d'un concurrent. La manager de zone negocie en urgence : programme de fidelite ameliore, meilleures marges, acces prioritaire aux stocks. Accord d'exclusivite 3 mois signe. Suivi prevu le 30 avril.<br/><strong>Statut :</strong> Resolu — partenariat renouvele.</p>
+    </div>
+    <div class="oral-scene-card">
+      <h4>Rapport #2 — Hub Lyon</h4>
+      <p>17 avis negatifs en 48h sur une enceinte connectee (panne apres moins de 5 jours). Liste suspendue, clients contactes, remboursement ou remplacement propose. Lot defectueux de 200 unites expedie avant controle qualite. Fournisseur reconnu responsable.<br/><strong>Statut :</strong> Resolu — lot retire, fournisseur responsable.</p>
+    </div>
+    <div class="oral-scene-card">
+      <h4>Rapport #3 — Pop-up Lille</h4>
+      <p>Code promo 30% non programme dans les terminaux mobiles. Clients repartent sans acheter. L'agent contacte le support IT (resolution en 20 min), distribue des vouchers 48h, note les coordonnees de 10 clients. 3 achats en ligne via voucher apres l'evenement.<br/><strong>Statut :</strong> Clos — probleme resolu, clients recuperes.</p>
+    </div>
+  </div>
+  <footer>Cree par C. Iemfre</footer>
+</div>
+</div>
+
+<!-- STUDENT ENTRY -->
+<div class="screen" id="s-student-entry">
+<div class="wrap">
+  <span class="back" id="back-student">← Retour</span>
+  <div class="card">
+    <h2>Identification de l'equipe</h2>
+    <p>Code d'acces :</p>
+    <input type="text" id="e-code" placeholder="Code fourni par le professeur"/>
+    <p>Nom de l'equipe :</p>
+    <input type="text" id="e-team" placeholder="Ex : Team Alpha"/>
+    <p>Membres — 2 lettres prenom + 2 lettres nom (ex : CA-IE) — 5 max :</p>
+    <div id="e-members">
+      <div class="member-row"><input type="text" placeholder="Ex : CA-IE" maxlength="5" class="m-inp"/></div>
+    </div>
+    <button class="btn btn-ghost" style="font-size:12px;padding:6px 14px;margin-top:6px;" id="btn-add-member">+ Ajouter un membre</button>
+    <div id="e-err" style="color:#FF6B6B;font-size:12px;margin-top:8px;display:none;"></div>
+    <div class="btn-row">
+      <button class="btn btn-teal" id="btn-start-game">Lancer la mission</button>
+    </div>
+  </div>
+  <div id="resume-box" style="display:none;">
+    <div class="card" style="border-color:rgba(255,209,102,.3);">
+      <h3 style="color:#FFD166;margin-bottom:8px;">Progression sauvegardee detectee</h3>
+      <p id="resume-info"></p>
+      <div class="btn-row">
+        <button class="btn btn-gold" id="btn-resume">Reprendre</button>
+        <button class="btn btn-ghost" id="btn-restart">Recommencer</button>
+      </div>
+    </div>
+  </div>
+  <footer>Cree par C. Iemfre</footer>
+</div>
+</div>
+
+<!-- INTRO -->
+<div class="screen" id="s-intro">
+<div id="tb-intro" class="topbar"></div>
+<div class="wrap">
+  <div class="card">
+    <h1>Mission : Commerce Connect</h1>
+    <div class="warning">Throughout this mission, you will unlock secret fragments. <strong style="color:#FFD166;">Note them down carefully</strong> — you will need all five to enter the Master Code at the end.</div>
+    <div class="scenario">Paris, Monday 9:12 AM. The e-commerce platform ShopConnect has just experienced a major crisis: a series of malfunctions has paralysed operations — corrupted product listings, unprocessed customer complaints, falsified commercial data, and a promotional campaign launch sabotaged at the last minute.<br/><br/>Your team has been brought in as external consultants. Move through the five company departments, identify the failures, reconstruct the data and recover the five fragments of the Relaunch Code before the system locks down permanently.<br/><br/>Stay methodical, Agents. ShopConnect is counting on you.</div>
+    <div class="btn-row"><button class="btn btn-teal" id="btn-begin">Begin Mission</button></div>
+  </div>
+  <footer>Cree par C. Iemfre</footer>
+</div>
+</div>
+
+<!-- LEVEL INTRO -->
+<div class="screen" id="s-level-intro">
+<div id="tb-li" class="topbar"></div>
+<div class="wrap">
+  <div class="card">
+    <div id="li-content"></div>
+    <div class="btn-row"><button class="btn btn-teal" id="btn-start-ex">Start Exercise</button></div>
+  </div>
+  <footer>Cree par C. Iemfre</footer>
+</div>
+</div>
+
+<!-- EXERCISE -->
+<div class="screen" id="s-exercise">
+<div id="tb-ex" class="topbar"></div>
+<div class="wrap">
+  <div class="card"><div id="ex-content"></div></div>
+  <footer>Cree par C. Iemfre</footer>
+</div>
+</div>
+
+<!-- FRAGMENT -->
+<div class="screen" id="s-fragment">
+<div class="wrap" style="text-align:center;padding-top:3rem;">
+  <div class="card">
+    <div style="font-size:28px;margin-bottom:8px;">🔓</div>
+    <h2>Fragment unlocked!</h2>
+    <p style="font-size:12px;margin-bottom:4px;">Fragment <span id="f-num"></span> of 5</p>
+    <div class="fragment-box"><div class="fragment-word" id="f-word"></div></div>
+    <p style="font-size:12px;color:rgba(255,255,255,.4);margin:8px 0 16px;">Note it down — you will need it at the end!</p>
+    <button class="btn btn-gold" id="f-next">Continue</button>
+  </div>
+  <footer>Cree par C. Iemfre</footer>
+</div>
+</div>
+
+<!-- FINAL CODE -->
+<div class="screen" id="s-final">
+<div id="tb-final" class="topbar"></div>
+<div class="wrap" style="text-align:center;">
+  <div class="card">
+    <h1 style="margin-bottom:6px;">🏁 Final Code</h1>
+    <div class="scenario" style="text-align:center;">"All five fragments recovered. Assemble the Master Code and enter it below to restore the system."</div>
+    <div style="margin:16px 0;">
+      <p style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:10px;">Your unlocked fragments :</p>
+      <div class="frag-grid" id="frag-display"></div>
+    </div>
+    <input class="final-input" type="text" id="final-inp" placeholder="Enter the Master Code..."/>
+    <div id="final-res" style="margin:10px 0;"></div>
+    <button class="btn btn-gold" id="btn-check-final" style="margin-top:4px;">🔓 Submit Code</button>
+  </div>
+  <footer>Cree par C. Iemfre</footer>
+</div>
+</div>
+
+<!-- CONGRATS -->
+<div class="screen" id="s-congrats">
+<div class="wrap" style="text-align:center;padding-top:2rem;">
+  <div class="card">
+    <div style="font-size:3rem;margin-bottom:10px;">🎉</div>
+    <div style="font-size:22px;font-weight:500;color:#FFD166;margin:10px 0;">YOU ARE THE BEST TEAM</div>
+    <p style="color:#4ECDC4;font-size:14px;margin:6px 0 16px;">MISSION ACCOMPLISHED !<br/>ShopConnect is back online. Well done, Consultants.</p>
+    <div id="final-score" style="font-size:1.1rem;color:#FFD166;margin-bottom:16px;"></div>
+    <div class="btn-row" style="justify-content:center;">
+      <button class="btn btn-purple" id="btn-pdf-congrats">📄 Telecharger le PDF</button>
+      <button class="btn btn-teal" id="btn-home-congrats">Accueil</button>
+    </div>
+  </div>
+  <footer>Cree par C. Iemfre</footer>
+</div>
+</div>
+
+<!-- PDF BUTTON FIXED -->
+<button class="btn btn-purple pdf-btn-fixed" id="btn-pdf-fixed" style="display:none;">📄 PDF</button>
+
+<script>
+var TCODE = "0504";
+var FCODE = "YOU ARE THE BEST TEAM";
+var SCODE = "EXPERTSWANTED26";
+var FRAGS = ["YOU","ARE","THE","BEST","TEAM !"];
+var TFA = {};
+var matchState = {selDef:null,selWord:null,matched:{},pairs:[],sDefs:[],sWords:[]};
+var S = {team:"",members:[],score:0,lv:0,ex:0,frags:[],log:[]};
+var timerInterval = null;
+var timerLeft = 0;
+
+var LEVELS = [
+{title:"Level 1 - The Recruitment Hub",icon:"🔍",icoBg:"rgba(255,107,107,.15)",
+ intro:"<div style='display:flex;align-items:center;gap:12px;margin-bottom:14px;'><div class='level-icon' style='background:rgba(255,107,107,.15);'>🔍</div><h2 style='margin:0;'>Level 1 — The Recruitment Hub</h2></div><p>Before accessing the operational departments, all consultants must complete their MCO clearance. Prove that you have mastered the core vocabulary of commerce and sales.</p>",
+ exercises:[
+  {type:"qcm",timer:420,pass:10,pen:-10,pts:50,label:"QCM — Business Knowledge Assessment (Ex.1)",
+   instr:"<h3>QCM — Business Knowledge Assessment</h3><p><em>Complete the commercial knowledge assessment. You have 7 minutes.</em></p>",
+   data:[
+    {q:"The abbreviation B2C stands for:",o:["Business to Competitor","Business to Consumer","Budget to Customer","Brand to Channel"],a:1},
+    {q:"Which best defines e-commerce?",o:["Selling products only through physical stores","Managing a company's internal IT systems","Buying and selling goods or services online","Advertising products on television"],a:2},
+    {q:"A customer who regularly buys from the same brand and recommends it is called:",o:["A prospect","A target","A lead","A loyal customer"],a:3},
+    {q:"Which document summarises a company's revenues, costs and profit over a given period?",o:["A stock inventory","A profit and loss statement","A purchase order","A delivery note"],a:1},
+    {q:"Upselling in a commercial context means:",o:["Selling a product at a reduced price","Offering a free sample to a new customer","Encouraging a customer to buy a more expensive version of a product","Selling unsold stock at the end of a season"],a:2},
+    {q:"Which best describes a call to action (CTA)?",o:["A complaint submitted by a customer","A meeting between a sales team and a client","A prompt encouraging the user to take a specific action such as Buy now","A legal notice on a commercial website"],a:2},
+    {q:"A customer who has shown interest but has not yet purchased is called:",o:["A client","A prospect","A supplier","A partner"],a:1},
+    {q:"The term conversion rate refers to:",o:["The rate at which products are returned","The number of visitors on a website per day","The percentage of visitors who complete a desired action such as a purchase","The discount rate applied to bulk orders"],a:2},
+    {q:"Which is an example of a digital payment method?",o:["A cheque","A purchase order","A digital wallet such as PayPal or Apple Pay","A bank transfer by post"],a:2},
+    {q:"Stock management in a retail context involves:",o:["Managing customer complaints","Training sales staff","Setting prices for products","Monitoring and controlling the quantity of products available for sale"],a:3},
+    {q:"A margin in commerce is:",o:["The total revenue generated by a sale","The cost of producing a single unit","The difference between the selling price and the cost price","The discount offered to loyal customers"],a:2},
+    {q:"Which best describes omnichannel retail?",o:["Selling exclusively through social media","Operating only with physical stores","Using a single online platform for all sales","Providing a seamless customer experience across multiple channels"],a:3}
+   ]},
+  {type:"qcm",timer:null,pass:10,pen:-10,pts:50,label:"QCM — Business Knowledge Assessment (Ex.2)",
+   instr:"<h3>QCM — Business Knowledge Assessment</h3><p><em>First attempt incomplete. A second assessment has been loaded.</em></p>",
+   data:[
+    {q:"The term target audience refers to:",o:["The total number of products sold per month","The company's annual sales objective","The specific group of consumers a marketing campaign is aimed at","The number of competitors in a market"],a:2},
+    {q:"A purchase order is:",o:["A document confirming a customer has received their delivery","A formal document sent by a buyer to a supplier to request goods or services","An invoice issued by a supplier after delivery","A contract between two competing companies"],a:1},
+    {q:"Which best describes customer satisfaction?",o:["The total number of purchases made by a customer","The speed at which a product is delivered","The discount offered after a complaint","The degree to which a product meets or exceeds a customer's expectations"],a:3},
+    {q:"Cross-selling means:",o:["Selling products at a loss to attract customers","Offering a refund to an unsatisfied customer","Suggesting complementary products based on the current purchase","Advertising on competitor websites"],a:2},
+    {q:"A USP is:",o:["A universal standard for online pricing","A type of customer loyalty programme","A method for tracking deliveries","The specific feature that makes a product stand out from competitors"],a:3},
+    {q:"Which is a KPI used in e-commerce?",o:["The number of employees per department","The colour scheme of the website","The cart abandonment rate","The number of supplier contracts signed"],a:2},
+    {q:"After-sales service refers to:",o:["The marketing campaign following a product launch","A discount offered the day after a purchase","The process of negotiating new supplier contracts","Support and assistance provided to customers after a purchase"],a:3},
+    {q:"Which best describes logistics in a commercial context?",o:["The design of a company's website","The financial planning of a business","The organisation of the storage, transportation and delivery of goods","The recruitment of sales staff"],a:2},
+    {q:"A refund policy in e-commerce refers to:",o:["The pricing strategy applied to seasonal products","The rules defining conditions under which customers can return products and receive money back","The terms of payment agreed with a supplier","The discount applied to bulk purchases"],a:1},
+    {q:"Brand awareness means:",o:["The number of products a brand sells per year","A legal trademark registered by a company","The extent to which consumers recognise and are familiar with a brand","The range of products offered by a brand"],a:2},
+    {q:"Which is an example of inbound marketing?",o:["Cold-calling potential customers","Sending unsolicited promotional emails","Distributing flyers in the street","Publishing useful blog content that attracts customers to a website"],a:3},
+    {q:"A loyalty programme is designed to:",o:["Train new employees in sales techniques","Monitor competitor pricing strategies","Reward regular customers and encourage repeat purchases","Manage supplier relationships"],a:2}
+   ]}
+ ]},
+{title:"Level 2 - The Customer Relations Hub",icon:"📞",icoBg:"rgba(78,205,196,.15)",
+ intro:"<div style='display:flex;align-items:center;gap:12px;margin-bottom:14px;'><div class='level-icon' style='background:rgba(78,205,196,.15);'>📞</div><h2 style='margin:0;'>Level 2 — The Customer Relations Hub</h2></div><p>You have reached the customer complaints processing centre. The department manager discovered this morning that her access had been revoked without explanation. Two customer complaint files have been flagged as suspicious in the last 24 hours. Your team must analyse each file and answer the verification system's questions.</p>",
+ exercises:[
+  {type:"tf",timer:null,pass:8,pen:-10,pts:50,label:"True/False — File #C-081",
+   instr:"<h3>Exercise 1 — Reading Comprehension : True / False</h3><p><em>Customer file #C-081 has been loaded into the system. Read carefully.</em></p><div class='situation-card'><strong>Customer Complaint File #C-081</strong><br/>ShopConnect Ltd. | Date : Thursday 18 April — 10:22 | Advisor L. Petit #4412<br/><br/>At 10:22, customer Mrs. Sandra Webb contacted the customer service department by phone to report that she had not received her order, placed eleven days earlier. According to the tracking system, the parcel had been marked as delivered on 15 April at 14:05, but Mrs. Webb stated that she was at home at the time and received nothing.<br/><br/>Advisor L. Petit checked the order history and confirmed that the item — a wireless keyboard — had been dispatched on 12 April. The tracking reference showed the parcel as delivered to the correct address. However, no signature had been obtained at the time of delivery.<br/><br/>Mrs. Webb explained that she had already contacted the delivery company directly, who had closed her case without resolution, stating that their driver had confirmed the delivery. She expressed frustration and requested either a full refund or an immediate replacement.<br/><br/>Advisor Petit apologised for the inconvenience and informed Mrs. Webb that a replacement item would be dispatched within 48 hours at no additional cost. A formal complaint was logged against the delivery company and a follow-up email was sent to Mrs. Webb confirming the resolution. The case was escalated to the logistics supervisor for review.<br/><br/><em>Status : Resolved — replacement dispatched</em></div>",
+   data:[
+    {q:"Mrs. Webb contacted customer services by email.",a:false,c:"She contacted customer services by phone."},
+    {q:"The order had been placed more than a week before the call.",a:true,c:""},
+    {q:"The tracking system showed the parcel as still in transit.",a:false,c:"The tracking showed the parcel as already delivered."},
+    {q:"The item ordered was a wireless keyboard.",a:true,c:""},
+    {q:"A signature had been collected upon delivery.",a:false,c:"No signature had been obtained."},
+    {q:"Mrs. Webb had already tried to resolve the issue with the delivery company.",a:true,c:""},
+    {q:"The delivery company accepted responsibility and offered a refund.",a:false,c:"The delivery company closed the case without resolution."},
+    {q:"Advisor Petit offered Mrs. Webb a replacement or a refund.",a:true,c:""},
+    {q:"The replacement was sent within 24 hours.",a:false,c:"The replacement was to be dispatched within 48 hours."},
+    {q:"The case was passed on to a supervisor after the call.",a:true,c:""}
+   ]},
+  {type:"qcm",timer:null,pass:7,pen:-10,pts:50,label:"QCM — File #D-204",
+   instr:"<h3>Exercise 2 — Reading Comprehension : QCM</h3><p><em>File #C-081 analysis inconclusive. A second file, #D-204, has been flagged. Read and answer.</em></p><div class='situation-card'><strong>Customer Complaint File #D-204</strong><br/>ShopConnect Ltd. | Date : Friday 19 April — 15:47 | Advisor R. Moreau #3367<br/><br/>At 15:47, customer Mr. James Holloway submitted a written complaint via the ShopConnect website contact form. He reported that he had received a product — a portable phone charger — that was clearly different from what was displayed on the product page at the time of purchase. The item received was an older model, and the packaging was damaged.<br/><br/>Advisor Moreau reviewed the product listing and confirmed that the page had been updated after Mr. Holloway's order had been placed, without any notification being sent to customers with pending orders. The product description and images had been changed by the marketing team on 16 April, two days after Mr. Holloway's purchase on 14 April.<br/><br/>Mr. Holloway requested a full refund and stated he no longer wished to receive a replacement. Advisor Moreau processed the refund immediately and sent a confirmation email within the hour. A formal internal report was submitted to the product management team.<br/><br/>The marketing team was notified and instructed to implement a protocol preventing product page changes from affecting customers with pending orders.<br/><br/><em>Status : Closed — full refund issued</em></div>",
+   data:[
+    {q:"How did Mr. Holloway submit his complaint?",o:["By telephone","By post","Via the website contact form","In person at a ShopConnect store"],a:2},
+    {q:"What was the problem with the item received?",o:["It was the wrong size","It arrived three weeks late","It was broken on arrival","It was a different model from what was shown, and the packaging was damaged"],a:3},
+    {q:"When was the product page updated?",o:["Before Mr. Holloway placed his order","On the same day as his order","Two days after his order was placed","One week after delivery"],a:2},
+    {q:"Was Mr. Holloway informed about the product page update?",o:["Yes, by email","Yes, by phone","Yes, via a website notification","No, no notification was sent"],a:3},
+    {q:"What did Mr. Holloway request?",o:["A replacement product","A discount voucher","A full refund","A store credit"],a:2},
+    {q:"How quickly did Advisor Moreau process the refund?",o:["Within 24 hours","Within 48 hours","At the end of the working week","Immediately, with a confirmation email within the hour"],a:3},
+    {q:"What action was taken following this complaint?",o:["The marketing team was dismissed","The product was removed from the website","Mr. Holloway was offered a loyalty voucher","A protocol was implemented to prevent page changes from affecting pending orders"],a:3},
+    {q:"What is the current status of the case?",o:["Under investigation","Escalated to management","Awaiting customer response","Closed — full refund issued"],a:3}
+   ]}
+ ]},
+{title:"Level 3 - The Field Sales Hub",icon:"🏪",icoBg:"rgba(160,130,255,.15)",
+ intro:"<div style='display:flex;align-items:center;gap:12px;margin-bottom:14px;'><div class='level-icon' style='background:rgba(160,130,255,.15);'>🏪</div><h2 style='margin:0;'>Level 3 — The Field Sales Hub</h2></div><p>An urgent commercial situation has been escalated from one of the retail partner sites. The area manager is unreachable. One consultant — drawn at random — must step in immediately and report back to their manager. No preparation. No notes. The Sales Director is watching.</p>",
+ exercises:[
+  {type:"oral",pass:8,pen:-10,pts:50,label:"Oral — Situation 1",
+   instr:"<h3>Exercise 1 — Oral Situation</h3><p><em>Agent [drawn at random], you are live. Handle the situation and report back to your manager. Enter the validation code when instructed.</em></p>",
+   sit:"<strong>Situation Card #1</strong><br/><br/>You are a sales advisor at a ShopConnect retail partner store. A customer approaches you, visibly frustrated. He explains that he ordered a product online three days ago and chose in-store collection. When he arrived to collect it yesterday, he was told the item was out of stock — but he never received any notification. He has come back today demanding an explanation and a solution. He says he needs the product urgently as it is a gift.<br/><br/>You handle the situation: you apologise, explain that a stock error occurred and the system failed to send an automatic alert, and offer him two options — immediate home delivery at no extra cost within 24 hours, or a 10% discount voucher if he agrees to wait two days for in-store collection. The customer chooses home delivery and leaves satisfied.<br/><br/><strong>Your task:</strong> Report the situation and the solution you provided to your manager.<br/><br/><strong>You will be assessed on:</strong><ul class='assess-list'><li>Use of appropriate commercial vocabulary</li><li>Clarity and structure of the oral report</li><li>Ability to explain a problem and justify the solution</li><li>Professional tone when reporting to a manager</li></ul>",
+   timing:"No preparation time. No notes. Do not read the text. Use your own words."},
+  {type:"oral",pass:7,pen:-10,pts:50,label:"Oral — Situation 2",
+   instr:"<h3>Exercise 2 — Oral Situation</h3><p><em>Performance insufficient. A second situation has escalated. A different agent must respond.</em></p>",
+   sit:"<strong>Situation Card #2</strong><br/><br/>You are a sales advisor at a ShopConnect click-and-collect point. A customer arrives to collect her order, but the item — a coffee machine — is not available. It was accidentally sold in-store and the stock was not updated in the system. The customer is visibly upset: she took time off work to collect the item, which was needed for a family event this weekend.<br/><br/>You handle the situation: you apologise sincerely, explain that a stock synchronisation error occurred between the website and the store, and offer her two solutions — express home delivery guaranteed before Saturday morning at no extra cost, or a full refund with a 15% discount voucher for a future purchase. The customer chooses express delivery and thanks you for your responsiveness.<br/><br/><strong>Your task:</strong> Report the situation and the solution you provided to your manager.<br/><br/><strong>You will be assessed on:</strong><ul class='assess-list'><li>Use of appropriate commercial and customer service vocabulary</li><li>Clear and structured oral reporting to a manager</li><li>Ability to explain the cause of the problem and justify the solution</li><li>Professional tone and accuracy</li></ul>",
+   timing:"No preparation time. No notes. Do not read the text. Use your own words."}
+ ]},
+{title:"Level 4 - The Digital Marketing Hub",icon:"📊",icoBg:"rgba(255,209,102,.15)",
+ intro:"<div style='display:flex;align-items:center;gap:12px;margin-bottom:14px;'><div class='level-icon' style='background:rgba(255,209,102,.15);'>📊</div><h2 style='margin:0;'>Level 4 — The Digital Marketing Hub</h2></div><p>The analysis team has recovered encrypted data fragments from the suspect's workstation. Every key commercial and marketing term has been replaced by its definition. Your team must match each definition to the correct word before the timer runs out. Every second counts.</p>",
+ exercises:[
+  {type:"match",timer:360,pass:8,pen:-10,pts:50,label:"Match — Exercise 1",
+   instr:"<h3>Exercise 1 — Match words and definitions</h3><p><em>Encrypted fragments loaded. You have 6 minutes to decode.</em></p>",
+   pairs:[
+    {d:"Attracting customers by sharing useful online content instead of advertising directly.",a:"INBOUND MARKETING"},
+    {d:"The percentage of website visitors who leave without clicking on anything.",a:"BOUNCE RATE"},
+    {d:"A document that sets out a company's commercial goals, target audience and budget for a campaign.",a:"MARKETING PLAN"},
+    {d:"The total amount of money a company expects to earn from one customer over time.",a:"CUSTOMER LIFETIME VALUE"},
+    {d:"Dividing a market into groups of customers who share similar needs or characteristics.",a:"MARKET SEGMENTATION"},
+    {d:"A button or link on a webpage that encourages the user to do something such as Buy now.",a:"CALL TO ACTION"},
+    {d:"Improving a website so that it appears higher in search engine results without paying for ads.",a:"SEO"},
+    {d:"The percentage of people who open a promotional email out of all those who received it.",a:"OPEN RATE"},
+    {d:"All the steps a customer goes through from discovering a brand to making a purchase.",a:"CUSTOMER JOURNEY"},
+    {d:"Suggesting related or complementary products to a customer who is already buying something.",a:"CROSS-SELLING"}
+   ]},
+  {type:"match",timer:480,pass:8,pen:-10,pts:50,label:"Match — Exercise 2",
+   instr:"<h3>Exercise 2 — Match words and definitions</h3><p><em>First cipher incomplete. A second batch has been extracted. Timer restarted.</em></p>",
+   pairs:[
+    {d:"The difference between the selling price of a product and its cost price.",a:"PROFIT MARGIN"},
+    {d:"Encouraging a customer to buy a more expensive or higher-quality version of a product they are already considering.",a:"UPSELLING"},
+    {d:"A regular email sent to subscribers with news, offers or content about a brand.",a:"NEWSLETTER"},
+    {d:"Setting a low price when launching a product to attract as many customers as possible quickly.",a:"PENETRATION PRICING"},
+    {d:"The percentage of total sales in a market that belongs to one company.",a:"MARKET SHARE"},
+    {d:"An online advertising model where the advertiser pays each time someone clicks on their ad.",a:"PAY-PER-CLICK"},
+    {d:"A figure showing how much an audience interacts with a brand's content.",a:"ENGAGEMENT RATE"},
+    {d:"All the actions taken to keep existing customers and stop them from going to a competitor.",a:"CUSTOMER RETENTION"},
+    {d:"Setting prices based on what competitors are currently charging for similar products.",a:"COMPETITIVE PRICING"},
+    {d:"The moment when a prospect completes a desired action such as making a purchase or signing up.",a:"CONVERSION"}
+   ]}
+ ]},
+{title:"Level 5 - The Director General's Office",icon:"🏢",icoBg:"rgba(255,107,107,.15)",
+ intro:"<div style='display:flex;align-items:center;gap:12px;margin-bottom:14px;'><div class='level-icon' style='background:rgba(255,107,107,.15);'>🏢</div><h2 style='margin:0;'>Level 5 — The Director General's Office</h2></div><p>You have reached the final sector. The Director General's office holds the last fragment of the Relaunch Code. Three commercial situation reports are on the desk. One consultant — drawn at random — must deliver a clear and structured oral account of each one. No preparation. No notes.</p>",
+ exercises:[
+  {type:"oral",pass:8,pen:-10,pts:50,label:"Oral Report — Situation 1",
+   instr:"<h3>Exercise 1 — Oral Situation Report</h3><p><em>Situation Report #1 displayed. Agent [drawn at random], deliver your oral account to the Director.</em></p>",
+   sit:"<strong>Situation Report Sheet #1</strong><br/>ShopConnect Ltd. | TechZone Bordeaux | Wednesday 17 April — 14:30 | K. Duval #2210<br/><br/>At 14:30, during a scheduled visit to TechZone Bordeaux, Area Manager Duval discovered that ShopConnect's promotional display had been dismantled and replaced by a competitor's stand. The store manager explained that the competitor had offered a last-minute deal including free display materials and a higher commission rate on sales.<br/><br/>Manager Duval requested an urgent meeting with the store director. During the meeting, she presented ShopConnect's updated loyalty programme for retail partners, including improved margins on the top 10 products and priority access to new stock. The store director agreed to restore ShopConnect's display and signed a new three-month exclusivity agreement for the electronics section.<br/><br/>A full report was submitted to the regional director the same evening. A follow-up visit was scheduled for 30 April to assess compliance.<br/><br/><em>Status : Resolved — partnership renewed</em><br/><br/><strong>Your task:</strong> Give a clear oral account of this situation report to the Director. Cover the key facts: what happened, when, what was found, what actions were taken and what the current status is.",
+   timing:"No preparation time. No notes. Do not read the text. Use your own words."},
+  {type:"oral",pass:7,pen:-10,pts:50,label:"Oral Report — Situation 2",
+   instr:"<h3>Exercise 2 — Oral Situation Report</h3><p><em>Account insufficient. Situation Report #2 has been loaded. Agent [drawn at random], you're up.</em></p>",
+   sit:"<strong>Situation Report Sheet #2</strong><br/>ShopConnect Ltd. | Customer Service Hub, Lyon | Monday 22 April — 09:15 | F. Bernard #1089<br/><br/>At 09:15, Team Leader Bernard identified an unusual pattern in the complaints database: seventeen customers had submitted negative reviews within a 48-hour window, all relating to the same product — a smart home speaker. All complaints described the same defect: the device stopped working after fewer than five days of use.<br/><br/>Bernard immediately suspended the product listing and notified the product quality team. All seventeen affected customers were contacted personally and offered a full refund or a free replacement with an upgraded model. A formal quality alert was sent to the supplier.<br/><br/>An internal investigation revealed that a faulty batch of approximately 200 units had been dispatched before the quality control check had been completed. The supplier accepted responsibility and agreed to cover the cost of all replacements.<br/><br/><em>Status : Resolved — faulty batch withdrawn, supplier liability confirmed</em><br/><br/><strong>Your task:</strong> Give a clear oral account of this situation report to the Director.",
+   timing:"No preparation time. No notes. Do not read the text. Use your own words."},
+  {type:"oral",pass:7,pen:-10,pts:50,label:"Oral Report — Situation 3",
+   instr:"<h3>Exercise 3 — Oral Situation Report</h3><p><em>Final chance. Situation Report #3. Agent [drawn at random], this is your moment.</em></p>",
+   sit:"<strong>Situation Report Sheet #3</strong><br/>ShopConnect Ltd. | Pop-Up Store, Lille Grand Palais | Saturday 27 April — 11:40 | M. Leroy #3541<br/><br/>At 11:40, during a promotional pop-up event, Sales Coordinator Leroy noticed that a significant number of customers were leaving the stand without purchasing after being told that the advertised discount — 30% off selected products — was not being applied correctly at the point of sale. The promotional code had not been programmed into the mobile payment terminals.<br/><br/>Leroy immediately contacted the IT support team, who resolved the technical issue remotely within twenty minutes. In the meantime, Leroy informed customers of the delay, offered them a printed voucher valid for 48 hours on the ShopConnect website, and personally noted the contact details of ten customers who agreed to be called back.<br/><br/>Once the terminals were operational, the discount was applied correctly for the remainder of the event. All ten customers who had left were contacted and three completed their purchase online using the voucher.<br/><br/><em>Status : Closed — issue resolved, customer recovery actions completed</em><br/><br/><strong>Your task:</strong> Give a clear oral account of this situation report to the Director.",
+   timing:"No preparation time. No notes. Do not read the text. Use your own words."}
+ ]}
+];
+
+// ===== UTILS =====
+function showScreen(id){
+  var all=document.querySelectorAll(".screen");
+  for(var i=0;i<all.length;i++) all[i].classList.remove("active");
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+  var pdfBtn=document.getElementById("btn-pdf-fixed");
+  var gameScreens=["s-intro","s-level-intro","s-exercise","s-fragment","s-final"];
+  var inGame=false;
+  for(var j=0;j<gameScreens.length;j++){if(gameScreens[j]===id){inGame=true;break;}}
+  pdfBtn.style.display=inGame?"flex":"none";
+}
+function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function fmt(s){return Math.floor(s/60)+":"+(s%60<10?"0":"")+(s%60);}
+function tb(){return "<span class='chip chip-red'>"+S.team+"</span><span class='chip chip-teal'>"+S.score+" pts</span><span class='chip chip-gold'>Level "+(S.lv+1)+"/5</span>";}
+function updTB(){var ids=["tb-intro","tb-li","tb-ex","tb-final"];for(var i=0;i<ids.length;i++){var e=document.getElementById(ids[i]);if(e)e.innerHTML=tb();}}
+
+// ===== SAVE / LOAD =====
+function saveState(){
+  var key="mcc_"+S.team.toLowerCase().replace(/\s/g,"_");
+  localStorage.setItem(key,JSON.stringify({team:S.team,members:S.members,score:S.score,lv:S.lv,ex:S.ex,frags:S.frags,log:S.log}));
+}
+function loadState(team){
+  var key="mcc_"+team.toLowerCase().replace(/\s/g,"_");
+  var raw=localStorage.getItem(key);
+  return raw?JSON.parse(raw):null;
+}
+function clearState(team){
+  var key="mcc_"+team.toLowerCase().replace(/\s/g,"_");
+  localStorage.removeItem(key);
+}
+
+// ===== AUTH =====
+function teacherLogin(){
+  var v=document.getElementById("t-pwd").value;
+  var err=document.getElementById("t-err");
+  if(v===TCODE){err.style.display="none";showScreen("s-teacher");}
+  else{err.style.display="block";}
+}
+
+// ===== STUDENT =====
+function addMember(){
+  var c=document.getElementById("e-members");
+  if(c.children.length>=5){alert("5 members maximum.");return;}
+  var r=document.createElement("div");r.className="member-row";
+  r.innerHTML="<input type='text' placeholder='Ex : CA-IE' maxlength='5' class='m-inp'/><button class='rm-btn' onclick='this.parentElement.remove()'>x</button>";
+  c.appendChild(r);
+}
+
+function checkResume(){
+  var team=document.getElementById("e-team").value.trim();
+  if(!team)return;
+  var saved=loadState(team);
+  var box=document.getElementById("resume-box");
+  var info=document.getElementById("resume-info");
+  if(saved && saved.lv>=0){
+    info.textContent="Equipe \""+saved.team+"\" — Niveau "+(saved.lv+1)+" | Score : "+saved.score+" pts | Fragments : "+saved.frags.length+"/5";
+    box.style.display="block";
+  } else {
+    box.style.display="none";
+  }
+}
+
+function startGame(){
+  var code=document.getElementById("e-code").value.trim();
+  var err=document.getElementById("e-err");
+  if(code.toUpperCase()!==SCODE){err.style.display="block";err.textContent="Invalid access code.";return;}
+  var t=document.getElementById("e-team").value.trim();
+  if(!t){err.style.display="block";err.textContent="Please enter a team name.";return;}
+  var inps=document.querySelectorAll(".m-inp");
+  var m=[];for(var i=0;i<inps.length;i++){if(inps[i].value.trim())m.push(inps[i].value.trim());}
+  if(!m.length){err.style.display="block";err.textContent="Please enter at least one member.";return;}
+  err.style.display="none";
+  S={team:t,members:m,score:0,lv:0,ex:0,frags:[],log:[]};
+  clearState(t);
+  saveState();
+  updTB();showScreen("s-intro");
+}
+
+function resumeGame(){
+  var t=document.getElementById("e-team").value.trim();
+  var saved=loadState(t);
+  if(!saved)return;
+  S=saved;
+  updTB();
+  startLevel(S.lv+1);
+}
+
+// ===== GAME FLOW =====
+function startLevel(n){
+  S.lv=n-1;S.ex=0;
+  document.getElementById("li-content").innerHTML=LEVELS[S.lv].intro;
+  saveState();updTB();showScreen("s-level-intro");
+}
+function startExercise(){renderEx();showScreen("s-exercise");}
+
+function renderEx(){
+  var ex=LEVELS[S.lv].exercises[S.ex];
+  updTB();clearTmr();
+  var c=document.getElementById("ex-content");
+  if(ex.type==="qcm")renderQCM(ex,c);
+  else if(ex.type==="tf")renderTF(ex,c);
+  else if(ex.type==="oral")renderOral(ex,c);
+  else if(ex.type==="match")renderMatch(ex,c);
+}
+
+// ===== QCM =====
+function renderQCM(ex,c){
+  var h=ex.instr;
+  if(ex.timer)h+="<div class='timer-box' id='tmr'>"+fmt(ex.timer)+"</div>";
+  h+="<div id='qqs'>";
+  for(var qi=0;qi<ex.data.length;qi++){
+    var q=ex.data[qi];
+    var optOrder=shuffle([0,1,2,3]);q._opt=optOrder;
+    h+="<div style='margin:14px 0;'><p style='font-weight:500;font-size:13px;color:#fff;margin-bottom:8px;'>"+(qi+1)+". "+q.q+"</p>";
+    for(var k=0;k<optOrder.length;k++){
+      var oi=optOrder[k];
+      h+="<label class='qcm-opt' id='opt-"+qi+"-"+oi+"'><input type='radio' name='q"+qi+"' value='"+oi+"' style='display:none;'/> "+String.fromCharCode(65+k)+") "+q.o[oi]+"</label>";
+    }
+    h+="</div>";
+  }
+  h+="</div><div class='btn-row'><button class='btn btn-teal' id='sub-qcm'>Submit Answers</button></div><div id='qres'></div>";
+  c.innerHTML=h;
+  var opts=document.querySelectorAll(".qcm-opt");
+  for(var i=0;i<opts.length;i++){
+    (function(el){
+      el.addEventListener("click",function(){
+        var inp=el.querySelector("input");
+        var same=document.querySelectorAll("input[name='"+inp.name+"']");
+        for(var j=0;j<same.length;j++) same[j].closest(".qcm-opt").classList.remove("selected");
+        inp.checked=true;el.classList.add("selected");
+      });
+    })(opts[i]);
+  }
+  document.getElementById("sub-qcm").addEventListener("click",submitQCM);
+  if(ex.timer)startTmr(ex.timer,"qcm");
+}
+function submitQCM(){
+  var ex=LEVELS[S.lv].exercises[S.ex];clearTmr();var score=0;
+  var details=[];
+  for(var qi=0;qi<ex.data.length;qi++){
+    var q=ex.data[qi];
+    var sel=document.querySelector("input[name='q"+qi+"']:checked");
+    var chosen=sel?parseInt(sel.value):-1;
+    var correct=(chosen===q.a);if(correct)score++;
+    for(var oi=0;oi<q.o.length;oi++){
+      var el=document.getElementById("opt-"+qi+"-"+oi);if(!el)continue;
+      if(oi===q.a)el.classList.add("correct");
+      else if(oi===chosen&&!correct)el.classList.add("wrong");
+    }
+    details.push({q:q.q,given:(chosen>=0?q.o[chosen]:"(no answer)"),correct:q.o[q.a],ok:correct});
+  }
+  var sb=document.getElementById("sub-qcm");if(sb)sb.style.display="none";
+  finish(score,ex.data.length,ex,"qres",details);
+}
+
+// ===== TF =====
+function renderTF(ex,c){
+  TFA={};
+  var h=ex.instr+"<div id='tfqs'>";
+  for(var qi=0;qi<ex.data.length;qi++){
+    var q=ex.data[qi];
+    h+="<div style='margin:12px 0;background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.08);border-radius:8px;padding:10px 12px;'>";
+    h+="<p style='font-weight:500;font-size:13px;color:#fff;margin-bottom:8px;'>"+(qi+1)+". "+q.q+"</p>";
+    h+="<button class='tf-btn' id='tft-"+qi+"' onclick='selTF("+qi+",true)'>True</button>";
+    h+="<button class='tf-btn' id='tff-"+qi+"' onclick='selTF("+qi+",false)'>False</button>";
+    h+="<div id='tfc-"+qi+"' style='font-size:12px;color:#FF6B6B;margin-top:6px;display:none;'>"+q.c+"</div></div>";
+  }
+  h+="</div><div class='btn-row'><button class='btn btn-teal' id='sub-tf'>Submit Answers</button></div><div id='tres'></div>";
+  c.innerHTML=h;
+  document.getElementById("sub-tf").addEventListener("click",submitTF);
+}
+function selTF(qi,v){
+  TFA[qi]=v;
+  document.getElementById("tft-"+qi).className="tf-btn"+(v?" tf-sel-t":"");
+  document.getElementById("tff-"+qi).className="tf-btn"+(!v?" tf-sel-f":"");
+}
+function submitTF(){
+  var ex=LEVELS[S.lv].exercises[S.ex];var score=0;
+  var details=[];
+  for(var qi=0;qi<ex.data.length;qi++){
+    var q=ex.data[qi];var ok=(TFA[qi]===q.a);if(ok)score++;
+    var tb2=document.getElementById("tft-"+qi),fb=document.getElementById("tff-"+qi);
+    tb2.disabled=true;fb.disabled=true;
+    if(q.a){tb2.style.background="rgba(78,205,196,.2)";tb2.style.borderColor="rgba(78,205,196,.5)";}
+    else{fb.style.background="rgba(78,205,196,.2)";fb.style.borderColor="rgba(78,205,196,.5)";}
+    if(!ok&&q.c)document.getElementById("tfc-"+qi).style.display="block";
+    var given=(TFA[qi]===undefined)?"(no answer)":(TFA[qi]?"True":"False");
+    var corr=q.a?"True":"False";
+    details.push({q:q.q,given:given,correct:corr+(q.c?" — "+q.c:""),ok:ok});
+  }
+  var sb=document.getElementById("sub-tf");if(sb)sb.style.display="none";
+  finish(score,ex.data.length,ex,"tres",details);
+}
+
+// ===== MATCH =====
+function renderMatch(ex,c){
+  var pairs=ex.pairs;
+  var sDefs=shuffle(pairs.map(function(_,i){return i;}));
+  var sWords=shuffle(pairs.map(function(_,i){return i;}));
+  for(var i=0;i<sWords.length;i++){if(sWords[i]===sDefs[i]){var j=(i+1)%sWords.length;var t=sWords[i];sWords[i]=sWords[j];sWords[j]=t;}}
+  matchState={selDef:null,selWord:null,matched:{},pairs:pairs,sDefs:sDefs,sWords:sWords};
+  var h=ex.instr;
+  if(ex.timer)h+="<div class='timer-box' id='tmr'>"+fmt(ex.timer)+"</div>";
+  h+="<div class='wordbank'><strong style='color:#FFD166;'>Word bank — click a word, then click its definition:</strong><br/>";
+  for(var wi=0;wi<sWords.length;wi++){
+    h+="<span class='match-word-item' id='mw-"+wi+"' data-wi='"+wi+"'>"+pairs[sWords[wi]].a+"</span>";
+  }
+  h+="</div><div id='match-defs'>";
+  for(var di=0;di<sDefs.length;di++){
+    h+="<div class='match-def-item' id='md-"+di+"' data-di='"+di+"'>"+(di+1)+". "+pairs[sDefs[di]].d+"<span id='mdb-"+di+"' style='position:absolute;top:4px;right:8px;color:#4ECDC4;font-size:11px;'></span></div>";
+  }
+  h+="</div><div id='mres'></div>";
+  c.innerHTML=h;
+  var wItems=document.querySelectorAll(".match-word-item");
+  for(var w=0;w<wItems.length;w++){
+    (function(el){el.addEventListener("click",function(){selectWord(parseInt(el.getAttribute("data-wi")));});})(wItems[w]);
+  }
+  var dItems=document.querySelectorAll(".match-def-item");
+  for(var d=0;d<dItems.length;d++){
+    (function(el){el.addEventListener("click",function(){selectDef(parseInt(el.getAttribute("data-di")));});})(dItems[d]);
+  }
+  if(ex.timer)startTmr(ex.timer,"match");
+}
+function selectWord(wi){
+  if(matchState.matched["w"+wi])return;
+  var ws=document.querySelectorAll(".match-word-item");
+  for(var i=0;i<ws.length;i++)ws[i].classList.remove("selected");
+  matchState.selWord=wi;
+  document.getElementById("mw-"+wi).classList.add("selected");
+  if(matchState.selDef!==null)tryMatch();
+}
+function selectDef(di){
+  if(matchState.matched["d"+di])return;
+  var ds=document.querySelectorAll(".match-def-item");
+  for(var i=0;i<ds.length;i++){if(!ds[i].classList.contains("matched"))ds[i].classList.remove("selected");}
+  matchState.selDef=di;
+  document.getElementById("md-"+di).classList.add("selected");
+  if(matchState.selWord!==null)tryMatch();
+}
+function tryMatch(){
+  var di=matchState.selDef,wi=matchState.selWord;
+  var correct=(matchState.sDefs[di]===matchState.sWords[wi]);
+  if(correct){
+    matchState.matched["d"+di]=true;matchState.matched["w"+wi]=true;
+    var md=document.getElementById("md-"+di);
+    md.classList.add("matched");md.classList.remove("selected");
+    document.getElementById("mdb-"+di).textContent="OK";
+    document.getElementById("mw-"+wi).classList.add("used");
+    var ex=LEVELS[S.lv].exercises[S.ex];
+    if(Object.keys(matchState.matched).length/2===ex.pairs.length){
+      clearTmr();
+      var details=[];
+      for(var i=0;i<ex.pairs.length;i++) details.push({q:ex.pairs[i].d,given:ex.pairs[i].a,correct:ex.pairs[i].a,ok:true});
+      finish(ex.pairs.length,ex.pairs.length,ex,"mres",details);
+    }
+  } else {
+    var md2=document.getElementById("md-"+di);
+    md2.classList.add("wrong-match");
+    setTimeout(function(){md2.classList.remove("wrong-match","selected");},400);
+  }
+  matchState.selDef=null;matchState.selWord=null;
+  var ws=document.querySelectorAll(".match-word-item");
+  for(var i=0;i<ws.length;i++)ws[i].classList.remove("selected");
+}
+
+// ===== ORAL =====
+function renderOral(ex,c){
+  var member=pick(S.members);
+  var h=ex.instr;
+  h+="<div class='warning'>Agent drawn: <strong>"+member+"</strong></div>";
+  h+="<div class='situation-card'>"+ex.sit+"</div>";
+  h+="<p style='color:#4ECDC4;font-weight:500;font-size:13px;margin-bottom:14px;'>"+ex.timing+"</p>";
+  h+="<hr style='border:none;border-top:0.5px solid rgba(255,255,255,.08);margin:16px 0;'/>";
+  h+="<p style='font-weight:500;font-size:13px;'>Teacher: enter the evaluation code (1-10):</p>";
+  h+="<div class='code-row'><input type='number' id='oral-v' min='1' max='10' placeholder='1-10'/><button class='btn btn-teal' id='sub-oral'>Validate</button></div>";
+  h+="<div id='ores'></div>";
+  c.innerHTML=h;
+  document.getElementById("sub-oral").addEventListener("click",submitOral);
+}
+function submitOral(){
+  var ex=LEVELS[S.lv].exercises[S.ex];
+  var v=parseInt(document.getElementById("oral-v").value);
+  if(isNaN(v)||v<1||v>10){alert("Please enter a number between 1 and 10.");return;}
+  var details=[{q:"Oral performance",given:"Code: "+v+"/10",correct:"Required: "+ex.pass+"/10",ok:(v>=ex.pass)}];
+  finish(v,10,ex,"ores",details);
+}
+
+// ===== FINISH =====
+function finish(score,max,ex,resId,details){
+  var pass=(score>=ex.pass);
+  var delta=pass?ex.pts:ex.pen;
+  S.score+=delta;
+  S.log.push({lv:S.lv+1,exIdx:S.ex+1,label:ex.label||"Exercise",score:score,max:max,delta:delta,pass:pass,details:details||[]});
+  saveState();updTB();
+  var el=document.getElementById(resId);if(!el)return;
+  var label=(max===10&&ex.type==="oral"?"Code: "+score+"/10":"Score: "+score+"/"+max);
+  el.innerHTML="<div class='"+(pass?"result-ok":"result-fail")+"'>"+label+" — "+(pass?"+"+ex.pts+" points ✅":delta+" points ❌")+"</div>";
+  var btn=document.createElement("button");
+  btn.className="btn btn-teal";btn.style.marginTop="10px";btn.textContent="Continue";
+  btn.addEventListener("click",function(){advance(pass);});
+  el.appendChild(btn);
+}
+function advance(passed){
+  var lv=LEVELS[S.lv];
+  if(passed){unlockFrag();}
+  else{
+    var next=S.ex+1;
+    if(next<lv.exercises.length){S.ex=next;renderEx();}
+    else unlockFrag();
+  }
+}
+function unlockFrag(){
+  if(S.frags.indexOf(S.lv)===-1){
+    S.frags.push(S.lv);saveState();
+    document.getElementById("f-num").textContent=S.lv+1;
+    document.getElementById("f-word").textContent=FRAGS[S.lv];
+    document.getElementById("f-next").onclick=function(){
+      if(S.lv>=4){buildFinalScreen();showScreen("s-final");}
+      else startLevel(S.lv+2);
+    };
+    showScreen("s-fragment");
+  } else {
+    if(S.lv>=4){buildFinalScreen();showScreen("s-final");}
+    else startLevel(S.lv+2);
+  }
+}
+function buildFinalScreen(){
+  updTB();
+  var grid=document.getElementById("frag-display");
+  grid.innerHTML="";
+  for(var i=0;i<FRAGS.length;i++){
+    var unlocked=(S.frags.indexOf(i)!==-1);
+    var box=document.createElement("div");
+    box.className="fragment-box";
+    box.style.opacity=unlocked?"1":"0.3";
+    box.innerHTML="<div class='fragment-word'>"+(unlocked?FRAGS[i]:"?")+"</div><div style='font-size:10px;color:rgba(255,209,102,.5);margin-top:4px;'>#"+(i+1)+"</div>";
+    grid.appendChild(box);
+  }
+}
+
+// ===== TIMER =====
+function startTmr(sec,type){
+  timerLeft=sec;updTD();
+  timerInterval=setInterval(function(){
+    timerLeft--;updTD();
+    if(timerLeft<=30){var t=document.getElementById("tmr");if(t)t.classList.add("urgent");}
+    if(timerLeft<=0){
+      clearTmr();S.score-=10;updTB();saveState();
+      if(type==="qcm")submitQCM();
+      else if(type==="match"){
+        var ex2=LEVELS[S.lv].exercises[S.ex];
+        var sc=Object.keys(matchState.matched).length/2;
+        var details=[];
+        var pairs=matchState.pairs;
+        for(var i=0;i<pairs.length;i++){
+          var matched=(matchState.matched["d"+i]);
+          details.push({q:pairs[matchState.sDefs[i]].d,given:matched?pairs[matchState.sWords[i]].a:"(not answered)",correct:pairs[matchState.sDefs[i]].a,ok:!!matched});
+        }
+        finish(Math.floor(sc),ex2.pairs.length,ex2,"mres",details);
+      }
+    }
+  },1000);
+}
+function clearTmr(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}
+function updTD(){var e=document.getElementById("tmr");if(e)e.textContent=fmt(timerLeft);}
+
+// ===== FINAL CODE =====
+function checkFinal(){
+  var v=document.getElementById("final-inp").value.trim().toUpperCase();
+  var target=FCODE.toUpperCase();
+  if(v===target){
+    clearState(S.team);
+    document.getElementById("final-score").textContent="Final Score : "+S.score+" points";
+    showScreen("s-congrats");
+  } else {
+    document.getElementById("final-res").innerHTML="<div class='result-fail'>Incorrect code. Check your fragments and try again!</div>";
+    S.score-=10;updTB();saveState();
+  }
+}
+
+// ===== PDF =====
+function generatePDF(){
+  var d=new Date();
+  var dateStr=d.toLocaleDateString("fr-FR")+" "+d.toLocaleTimeString("fr-FR");
+
+  // Build content lines using jsPDF
+  var script=document.createElement("script");
+  script.src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+  script.onload=function(){
+    var jsPDF=window.jspdf.jsPDF;
+    var doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
+    var pageW=210, margin=15, contentW=pageW-margin*2;
+    var y=margin;
+    var lineH=6;
+
+    function checkPage(needed){
+      if(y+needed>285){doc.addPage();y=margin;}
+    }
+    function addLine(text,size,style,color){
+      doc.setFontSize(size||11);
+      doc.setFont("helvetica",style||"normal");
+      doc.setTextColor(color||"#1a1a2a");
+      var lines=doc.splitTextToSize(text,contentW);
+      for(var i=0;i<lines.length;i++){
+        checkPage(lineH);
+        doc.text(lines[i],margin,y);
+        y+=lineH;
+      }
+    }
+    function addH1(text){
+      checkPage(12);
+      doc.setFillColor(255,107,107);
+      doc.rect(margin,y-4,contentW,8,"F");
+      doc.setFontSize(14);doc.setFont("helvetica","bold");doc.setTextColor("#ffffff");
+      doc.text(text,margin+2,y+1);
+      y+=10;doc.setTextColor("#1a1a2a");
+    }
+    function addH2(text){
+      checkPage(10);
+      doc.setFillColor(78,205,196);
+      doc.rect(margin,y-3,3,7,"F");
+      doc.setFontSize(12);doc.setFont("helvetica","bold");doc.setTextColor("#1a1a2a");
+      doc.text(text,margin+5,y+1);
+      y+=9;
+    }
+    function addH3(text){
+      checkPage(8);
+      doc.setFontSize(11);doc.setFont("helvetica","bold");doc.setTextColor("#185FA5");
+      doc.text(text,margin,y);y+=7;doc.setTextColor("#1a1a2a");
+    }
+    function addInfoBox(){
+      checkPage(36);
+      doc.setFillColor(248,249,250);doc.setDrawColor(220,220,220);
+      doc.roundedRect(margin,y,contentW,34,2,2,"FD");
+      doc.setFontSize(11);doc.setFont("helvetica","normal");doc.setTextColor("#1a1a2a");
+      doc.text("Equipe : "+S.team,margin+4,y+8);
+      doc.text("Membres : "+S.members.join(", "),margin+4,y+15);
+      doc.text("Score total : "+S.score+" points",margin+4,y+22);
+      doc.text("Fragments debloques : "+S.frags.length+"/5     Date : "+dateStr,margin+4,y+29);
+      y+=38;
+    }
+    function addTableHeader(){
+      checkPage(10);
+      doc.setFillColor(24,95,165);
+      doc.rect(margin,y,contentW,7,"F");
+      doc.setFontSize(10);doc.setFont("helvetica","bold");doc.setTextColor("#ffffff");
+      doc.text("Niveau",margin+2,y+5);
+      doc.text("Exercice",margin+22,y+5);
+      doc.text("Score",margin+110,y+5);
+      doc.text("Points",margin+130,y+5);
+      doc.text("Resultat",margin+152,y+5);
+      y+=7;doc.setTextColor("#1a1a2a");
+    }
+    function addTableRow(entry,odd){
+      checkPage(7);
+      if(odd){doc.setFillColor(248,249,250);doc.rect(margin,y,contentW,6,"F");}
+      doc.setFontSize(9);doc.setFont("helvetica","normal");doc.setTextColor("#1a1a2a");
+      doc.text("Niv."+entry.lv,margin+2,y+4);
+      var lbl=doc.splitTextToSize(entry.label,85);
+      doc.text(lbl[0],margin+22,y+4);
+      doc.text(entry.score+"/"+entry.max,margin+110,y+4);
+      doc.text((entry.delta>0?"+":"")+entry.delta,margin+130,y+4);
+      if(entry.pass){doc.setTextColor(40,167,69);}else{doc.setTextColor(220,53,69);}
+      doc.text(entry.pass?"Reussi":"Echec",margin+152,y+4);
+      doc.setTextColor("#1a1a2a");
+      y+=6;
+    }
+    function addQRow(num,det,odd){
+      checkPage(18);
+      if(odd){doc.setFillColor(248,249,250);doc.rect(margin,y,contentW,det.ok?12:18,"F");}
+      doc.setFontSize(9);doc.setFont("helvetica","bold");doc.setTextColor("#1a1a2a");
+      var qLines=doc.splitTextToSize(num+". "+det.q,contentW-4);
+      for(var i=0;i<qLines.length;i++){checkPage(5);doc.text(qLines[i],margin+2,y+4+(i*4));} 
+      y+=4+qLines.length*4;
+      doc.setFont("helvetica","normal");
+      if(det.ok){doc.setTextColor(40,167,69);}else{doc.setTextColor(220,53,69);}
+      var gLines=doc.splitTextToSize("Reponse : "+det.given,contentW-4);
+      checkPage(5);doc.text(gLines[0],margin+2,y);y+=4;
+      if(!det.ok){
+        doc.setTextColor(220,53,69);doc.setFont("helvetica","italic");
+        var cLines=doc.splitTextToSize("Correction : "+det.correct,contentW-4);
+        checkPage(5);doc.text(cLines[0],margin+2,y);y+=5;
+      } else {y+=2;}
+      doc.setTextColor("#1a1a2a");doc.setFont("helvetica","normal");
+    }
+
+    // TITLE
+    addH1("Mission : Commerce Connect — Rapport de session");
+    y+=2;
+    addInfoBox();
+    y+=2;
+
+    // SCORES TABLE
+    addH2("Tableau des scores");
+    addTableHeader();
+    for(var i=0;i<S.log.length;i++) addTableRow(S.log[i],i%2===0);
+    y+=4;
+
+    // DETAIL
+    addH2("Detail des reponses par exercice");
+    for(var i=0;i<S.log.length;i++){
+      var entry=S.log[i];
+      addH3("Niveau "+entry.lv+" — "+entry.label+" ["+(entry.pass?"Reussi":"Echec")+" | "+entry.score+"/"+entry.max+"]");
+      if(entry.details&&entry.details.length){
+        for(var j=0;j<entry.details.length;j++){
+          addQRow(j+1,entry.details[j],j%2===0);
+        }
+      }
+      y+=4;
+    }
+
+    // Footer on each page
+    var totalPages=doc.getNumberOfPages();
+    for(var p=1;p<=totalPages;p++){
+      doc.setPage(p);
+      doc.setFontSize(8);doc.setFont("helvetica","normal");doc.setTextColor("#aaaaaa");
+      doc.text("Mission : Commerce Connect — Cree par C. Iemfre — Page "+p+"/"+totalPages,margin,292);
+    }
+
+    doc.save("rapport_"+S.team.replace(/\s/g,"_")+".pdf");
+  };
+  script.onerror=function(){alert("Impossible de charger la librairie PDF. Verifiez votre connexion internet.");};
+  document.head.appendChild(script);
+}
+
+// ===== EVENT LISTENERS =====
+document.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("btn-go-teacher").addEventListener("click",function(){showScreen("s-teacher-login");});
+  document.getElementById("btn-go-student").addEventListener("click",function(){showScreen("s-student-entry");});
+  document.getElementById("btn-go-rgpd").addEventListener("click",function(){showScreen("s-rgpd");});
+  document.getElementById("back-rgpd").addEventListener("click",function(){showScreen("s-home");});
+  document.getElementById("back-tlogin").addEventListener("click",function(){showScreen("s-home");});
+  document.getElementById("back-teacher").addEventListener("click",function(){showScreen("s-home");});
+  document.getElementById("back-student").addEventListener("click",function(){showScreen("s-home");});
+  document.getElementById("btn-teacher-login").addEventListener("click",teacherLogin);
+  document.getElementById("t-pwd").addEventListener("keydown",function(e){if(e.key==="Enter")teacherLogin();});
+  document.getElementById("btn-add-member").addEventListener("click",addMember);
+  document.getElementById("e-team").addEventListener("blur",checkResume);
+  document.getElementById("btn-start-game").addEventListener("click",startGame);
+  document.getElementById("btn-resume").addEventListener("click",resumeGame);
+  document.getElementById("btn-restart").addEventListener("click",function(){document.getElementById("resume-box").style.display="none";startGame();});
+  document.getElementById("btn-begin").addEventListener("click",function(){startLevel(1);});
+  document.getElementById("btn-start-ex").addEventListener("click",startExercise);
+  document.getElementById("btn-check-final").addEventListener("click",checkFinal);
+  document.getElementById("btn-pdf-fixed").addEventListener("click",generatePDF);
+  document.getElementById("btn-pdf-congrats").addEventListener("click",generatePDF);
+  document.getElementById("btn-home-congrats").addEventListener("click",function(){showScreen("s-home");});
+});
+</script>
+</body>
+</html>
