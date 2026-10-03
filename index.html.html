@@ -476,17 +476,21 @@ function tb(){return "<span class='chip chip-red'>"+S.team+"</span><span class='
 function updTB(){var ids=["tb-intro","tb-li","tb-ex","tb-final"];for(var i=0;i<ids.length;i++){var e=document.getElementById(ids[i]);if(e)e.innerHTML=tb();}}
 
 // ===== SAVE / LOAD =====
+function makeKey(members){
+  var sorted=members.slice().sort();
+  return "mcc_"+sorted.join("_").toUpperCase();
+}
 function saveState(){
-  var key="mcc_"+S.team.toLowerCase().replace(/\s/g,"_");
+  var key=makeKey(S.members);
   localStorage.setItem(key,JSON.stringify({team:S.team,members:S.members,score:S.score,lv:S.lv,ex:S.ex,frags:S.frags,log:S.log}));
 }
-function loadState(team){
-  var key="mcc_"+team.toLowerCase().replace(/\s/g,"_");
+function loadStateByMembers(members){
+  var key=makeKey(members);
   var raw=localStorage.getItem(key);
   return raw?JSON.parse(raw):null;
 }
-function clearState(team){
-  var key="mcc_"+team.toLowerCase().replace(/\s/g,"_");
+function clearStateByMembers(members){
+  var key=makeKey(members);
   localStorage.removeItem(key);
 }
 
@@ -508,12 +512,13 @@ function addMember(){
 }
 
 function checkResume(){
-  var team=document.getElementById("e-team").value.trim();
-  if(!team)return;
-  var saved=loadState(team);
+  var inps=document.querySelectorAll(".m-inp");
+  var m=[];for(var i=0;i<inps.length;i++){if(inps[i].value.trim())m.push(inps[i].value.trim());}
+  if(!m.length){document.getElementById("resume-box").style.display="none";return;}
+  var saved=loadStateByMembers(m);
   var box=document.getElementById("resume-box");
   var info=document.getElementById("resume-info");
-  if(saved && saved.lv>=0){
+  if(saved){
     info.textContent="Equipe \""+saved.team+"\" — Niveau "+(saved.lv+1)+" | Score : "+saved.score+" pts | Fragments : "+saved.frags.length+"/5";
     box.style.display="block";
   } else {
@@ -532,14 +537,15 @@ function startGame(){
   if(!m.length){err.style.display="block";err.textContent="Please enter at least one member.";return;}
   err.style.display="none";
   S={team:t,members:m,score:0,lv:0,ex:0,frags:[],log:[]};
-  clearState(t);
+  clearStateByMembers(m);
   saveState();
   updTB();showScreen("s-intro");
 }
 
 function resumeGame(){
-  var t=document.getElementById("e-team").value.trim();
-  var saved=loadState(t);
+  var inps=document.querySelectorAll(".m-inp");
+  var m=[];for(var i=0;i<inps.length;i++){if(inps[i].value.trim())m.push(inps[i].value.trim());}
+  var saved=loadStateByMembers(m);
   if(!saved)return;
   S=saved;
   updTB();
@@ -830,7 +836,7 @@ function checkFinal(){
   var v=document.getElementById("final-inp").value.trim().toUpperCase();
   var target=FCODE.toUpperCase();
   if(v===target){
-    clearState(S.team);
+    clearStateByMembers(S.members);
     document.getElementById("final-score").textContent="Final Score : "+S.score+" points";
     showScreen("s-congrats");
   } else {
@@ -997,6 +1003,10 @@ document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("t-pwd").addEventListener("keydown",function(e){if(e.key==="Enter")teacherLogin();});
   document.getElementById("btn-add-member").addEventListener("click",addMember);
   document.getElementById("e-team").addEventListener("blur",checkResume);
+  // Trigger resume check when member inputs change
+  document.getElementById("e-members").addEventListener("blur",function(e){
+    if(e.target.classList.contains("m-inp")) checkResume();
+  },true);
   document.getElementById("btn-start-game").addEventListener("click",startGame);
   document.getElementById("btn-resume").addEventListener("click",resumeGame);
   document.getElementById("btn-restart").addEventListener("click",function(){document.getElementById("resume-box").style.display="none";startGame();});
